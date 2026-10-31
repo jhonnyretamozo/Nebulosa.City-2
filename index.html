@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="google-site-verification" content="-vWIvxJYQ5mdsU36fHtf-e9Sl6Juj-KZBED51J9Zc1Q" />
+    <link rel="stylesheet" href="estilos.css?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="icono.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icono.png">
+  <link rel="shortcut icon" href="icono.png">
+  <link rel="apple-touch-icon" href="icono.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icono.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#a020f0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">  
+<title>Nebulosa.city</title>
+<meta name="description" content="Nebulosa.city es un juego espacial multijugador online. Crea una sala, invita a tus amigos y compite para conquistar la nebulosa. ¡Juega gratis ahora!">
+<meta name="keywords" content="nebulosa city, juego espacial, juego multijugador, juego online peru, nebulosa.city">
+<meta name="author" content="Nebulosa.city">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="Nebulosa.city - Juega con amigos">
+<meta property="og:description" content="Crea sala y juega online con tus amigos en Nebulosa.city">
+<meta property="og:url" content="https://nebulosa.city">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://nebulosa.city/preview.png">
+
+
+<meta name="google-site-verification" content="PEGA-AQUI-TU-CODIGO-DE-GOOGLE">
+<link rel="canonical" href="https://nebulosa.city/">
+
+</head>
+
+
+<body>
+
+<canvas id="game"></canvas>
+<audio id="menuMusic" loop preload="auto"></audio>
+<div class="music-msg" id="musicMsg"></div>
+<input type="file" id="photoInput" accept="image/*" hidden>
+<div class="photo-editor hidden" id="photoEditor">
+  <div class="pe-box">
+    <div class="pe-title">Tu foto</div>
+    <canvas id="peCanvas" width="300" height="300"></canvas>
+    <p class="pe-hint">Arrastra para mover la foto y usa la barra o la rueda para acercar</p>
+    <input type="range" class="pe-zoom" id="peZoom" min="1" max="4" step="0.01" value="1" aria-label="Zoom">
+    <div class="pe-actions">
+      <button type="button" class="pe-btn" id="peCancel">Cancelar</button>
+      <button type="button" class="pe-btn pe-ok" id="peOk">Usar foto</button>
+    </div>
+  </div>
+</div>
+<div class="power-hud" id="powerHud"></div>
+<div class="toast" id="toast"></div>
+
+
+
+  <button class="exit-btn" id="exitBtn" style="display:none;">Salir</button>
+
+<div class="hud">
+  <div class="mass-panel" id="massPanel" style="display:none;">Masa: 0</div>
+  <div class="mass-panel" id="roomPanel" style="display:none; top:60px;">Sala: ----</div>
+  <div class="leaderboard" id="leaderboard" style="display:none;">
+    <ol id="leaderboardList"></ol>
+  </div>
+  <div class="minimap-wrap" id="minimapWrap" style="display:none;">
+    <canvas id="minimap" width="130" height="130"></canvas>
+  </div>
+  <p class="hint" id="hint" style="display:none;"></p>
+  <div class="eject-btn" id="ejectBtn" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#e8dcc4" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2 v4 M12 18 v4 M2 12 h4 M18 12 h4"/></svg>
+    Masa
+  </div>
+  <div class="boost-btn" id="boostBtn" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#241c08" stroke-width="2"><path d="M13 2 L4 14 h6 l-1 8 9-12 h-6 z"/></svg>
+    Impulso
+  </div>
+  </div>
+</div>
+
+<div class="overlay screen" id="welcomeScreen">
+  <button type="button" class="music-btn off" aria-label="Música" title="Música">
+    <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+  </button>
+  <div class="astro" aria-hidden="true"><div class="astro-spin"></div></div>
+  <div class="astro two" aria-hidden="true"><div class="astro-spin"></div></div>
+  <div class="astro three" aria-hidden="true"><div class="astro-spin"></div></div>
+  <div class="astro four" aria-hidden="true"><div class="astro-spin"></div></div>
+  <div class="screen-inner">
+    <h1 class="ws-title">nebulosa.city</h1>
+    <p class="ws-sub">Bienvenido</p>
+    <div class="ws-circles">
+      <button type="button" class="ws-circle" id="goSoloBtn">Jugar Solo</button>
+      <button type="button" class="ws-circle" id="goOnlineBtn">Jugar Online</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay screen hidden" id="startScreen">
+  <button type="button" class="music-btn off" aria-label="Música" title="Música">
+    <svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    <svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+  </button>
+  <div class="astro" aria-hidden="true"><div class="astro-spin"></div></div>
+  <div class="astro two" aria-hidden="true"><div class="astro-spin"></div></div>
+  <div class="astro three" aria-hidden="true"><div class="astro-spin"></div></div>
+  <div class="astro four" aria-hidden="true"><div class="astro-spin"></div></div>
+  <button type="button" class="back-btn" id="backBtn" aria-label="Volver">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H5M11 6l-6 6 6 6"/></svg>
+  </button>
+  <div class="screen-inner">
+    <div class="pill-title">Personaje</div>
+    <button type="button" class="pick-circle" id="pickBtn" aria-label="Elegir personaje">
+      <span class="plus">+</span><img id="pickImg" alt="" hidden>
+    </button>
+
+    <div class="mp-panel online-box" id="onlineBox">
+      <label class="mp-toggle-row">
+        <input type="checkbox" id="mpToggle" checked disabled>
+        Online
+      </label>
+      <div class="mp-fields show" id="mpFields">
+        <div>
+          <label> servidor </label>
+          <input type="text" id="mpServerUrl" value="wss://nebulosa-city-server.onrender.com">
+        </div>
+        <div class="mp-row">
+          <div>
+            <label>Código de sala</label>
+            <input type="text" id="mpRoomCode" placeholder="ABCDE" maxlength="5" style="text-transform:uppercase;">
+          </div>
+        </div>
+        <div class="mp-row">
+          <button type="button" class="mp-btn" id="mpCreateBtn">Crear sala</button>
+          <button type="button" class="mp-btn" id="mpJoinBtn">Unirme a sala</button>
+        </div>
+        <div class="mp-status" id="mpStatus"></div>
+      </div>
+    </div>
+
+    <div class="name-field">
+      <label class="fld-label" for="nickname" style="font-size:20px;">Nombre</label>
+      <input id="nickname" class="pill-input" type="text" maxlength="18" autocomplete="nickname" placeholder="Tu nombre">
+    </div>
+
+    <div class="mp-status" id="formMsg"></div>
+    <button class="play-btn" id="playBtn" type="button">Jugar</button>
+    <div class="foot">nebulosa.city</div>
+  </div>
+
+  <div class="skin-picker hidden" id="skinPicker"><div class="skin-row" id="skinRow"></div></div>
+
+</div>
+
+<div class="overlay hidden" id="gameOverScreen">
+  <h1>¡Persidte!</h1>
+  <p class="result" id="finalMass">Masa final: 0</p><p class="sub">😂</p>
+  <button class="play-btn" id="retryBtn">Jugar de nuevo</button>
+  <button class="secondary-btn" id="changeSkinBtn">menu</button>
+</div>
+
+<div id="mobileJoystick" class="mobile-joystick" aria-label="Joystick de movimiento">
+  <div class="joystick-base"><div class="joystick-stick"></div></div>
+</div>
+<script src="script.js?v=3"></script>
+</body>
+</html>
